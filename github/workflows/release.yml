@@ -1,0 +1,35 @@
+name: Release
+on: [push]
+
+jobs:
+  release:
+    name: Release on GitHub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Go 1.15
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.15
+
+      - name: Check out code
+        uses: actions/checkout@v1
+
+      - name: Test
+        run: go test ./...
+
+      - name: Read Version From File
+        id: semver
+        run: |-
+          echo "::set-output name=version::$(cat version.txt)"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.semver.outputs.version }}
+          release_name: ${{ steps.semver.outputs.version }}
+          body: Version ${{ steps.semver.outputs.version }}
+          draft: false
+          prerelease: false
