@@ -1,4 +1,4 @@
-module github.com/joshuasprow/logger
+module github.com/joshuasprow/errors
 
 go 1.15
 
