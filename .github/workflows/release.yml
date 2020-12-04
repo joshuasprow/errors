@@ -20,7 +20,7 @@ jobs:
       - name: Read Version From File
         id: semver
         run: |-
-          echo "::set-output name=version::$(cat version.txt)"
+          echo "::set-output name=version::$(cat VERSION)"
 
       - name: Create Release
         id: create_release
