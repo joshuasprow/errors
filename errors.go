@@ -17,15 +17,17 @@ type Op string
 type Kind int
 
 func (k Kind) String() string {
+	unexpected := "unexpected"
+
 	switch k {
 	case KindUnexpected:
-		return "unexpected"
+		return unexpected
 	case KindUnmarshal:
 		return "unmarshal"
 	case KindUser:
 		return "user"
 	default:
-		panic(k)
+		return unexpected
 	}
 }
 
@@ -69,17 +71,17 @@ func E(args ...interface{}) error {
 }
 
 func (e *Error) Error() string {
-	strs := []string{}
+	ops := []string{}
 
 	for _, op := range Ops(e) {
 		if op == "" {
 			continue
 		}
 
-		strs = append(strs, string(op))
+		ops = append(ops, string(op))
 	}
 
-	return strings.Join(strs, ": ")
+	return strings.Join(ops, ": ")
 }
 
 // MarshalJSON is...
