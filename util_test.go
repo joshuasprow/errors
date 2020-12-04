@@ -68,7 +68,9 @@ func TestE(t *testing.T) {
 		{
 			name: "correctly formats message",
 			args: []interface{}{"msg1", "msg2"},
-			want: Error{Msg: "msg1: msg2"},
+			want: Error{
+				Msg: "msg1: msg2",
+			},
 		},
 	}
 
@@ -77,7 +79,7 @@ func TestE(t *testing.T) {
 			err := E(tt.args...).(*Error)
 			got := *err
 			if !cmp.Equal(got, tt.want) {
-				t.Errorf("thing() got = %v, want %v", got, tt.want)
+				t.Errorf("E() diff = %v", cmp.Diff(got, tt.want))
 			}
 		})
 	}
