@@ -10,36 +10,6 @@ import (
 
 // TODO: add real comments
 
-// Op is..,
-type Op string
-
-// Kind is...
-type Kind int
-
-func (k Kind) String() string {
-	unexpected := "unexpected"
-
-	switch k {
-	case KindUnexpected:
-		return unexpected
-	case KindUnmarshal:
-		return "unmarshal"
-	case KindUser:
-		return "user"
-	default:
-		return unexpected
-	}
-}
-
-const (
-	// KindUnexpected is...
-	KindUnexpected Kind = iota + 1
-	// KindUnmarshal is...
-	KindUnmarshal
-	// KindUser is...
-	KindUser
-)
-
 // Error is...
 type Error struct {
 	Err   error
@@ -73,7 +43,7 @@ func E(args ...interface{}) error {
 func (e *Error) Error() string {
 	ops := []string{}
 
-	for _, op := range Ops(e) {
+	for _, op := range GetOps(e) {
 		if op == "" {
 			continue
 		}
@@ -128,32 +98,4 @@ func (e *Error) UnmarshalJSON(data []byte) error {
 	// u.LastSeen = time.Unix(aux.LastSeen, 0)
 
 	return nil
-}
-
-// New is...
-func New(err error) Kind {
-	e, ok := err.(*Error)
-	if !ok {
-		return KindUnexpected
-	}
-
-	if e.Kind != 0 {
-		return e.Kind
-	}
-
-	return New(e.Err)
-}
-
-// Ops is...
-func Ops(e *Error) []Op {
-	ops := []Op{e.Op}
-
-	subErr, ok := e.Err.(*Error)
-	if !ok {
-		return ops
-	}
-
-	ops = append(ops, Ops(subErr)...)
-
-	return ops
 }
