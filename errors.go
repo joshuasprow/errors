@@ -20,6 +20,8 @@ func (k Kind) String() string {
 	switch k {
 	case KindUnexpected:
 		return "unexpected"
+	case KindUnmarshal:
+		return "unmarshal"
 	case KindUser:
 		return "user"
 	default:
@@ -30,6 +32,8 @@ func (k Kind) String() string {
 const (
 	// KindUnexpected is...
 	KindUnexpected Kind = iota + 1
+	// KindUnmarshal is...
+	KindUnmarshal
 	// KindUser is...
 	KindUser
 )
@@ -94,9 +98,12 @@ func (e *Error) MarshalJSON() ([]byte, error) {
 	})
 }
 
-// UnmarshalJSON is...
+// UnmarshalJSON is... based on (copied from) http://choly.ca/post/go-json-marshalling/
 func (e *Error) UnmarshalJSON(data []byte) error {
+	var op Op = "Error.UnmarshalJSON"
+
 	type Alias Error
+
 	aux := &struct {
 		// LastSeen int64 `json:"lastSeen"`
 		Err   error         `json:"err"`
@@ -111,10 +118,13 @@ func (e *Error) UnmarshalJSON(data []byte) error {
 		Level: e.Level,
 		Alias: (*Alias)(e),
 	}
+
 	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
+		return E(op, KindUnmarshal, err, "json.Unmarshal")
 	}
+
 	// u.LastSeen = time.Unix(aux.LastSeen, 0)
+
 	return nil
 }
 
