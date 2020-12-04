@@ -1,6 +1,7 @@
 package errors
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -75,6 +76,46 @@ func (e *Error) Error() string {
 	}
 
 	return strings.Join(strs, ": ")
+}
+
+// MarshalJSON is...
+func (e *Error) MarshalJSON() ([]byte, error) {
+	type Alias Error
+	return json.Marshal(&struct {
+		Err   error
+		Op    Op
+		Kind  Kind
+		Level zerolog.Level
+	}{
+		Err:   e.Err,
+		Op:    e.Op,
+		Kind:  e.Kind,
+		Level: e.Level,
+	})
+}
+
+// UnmarshalJSON is...
+func (e *Error) UnmarshalJSON(data []byte) error {
+	type Alias Error
+	aux := &struct {
+		// LastSeen int64 `json:"lastSeen"`
+		Err   error         `json:"err"`
+		Op    Op            `json:"op"`
+		Kind  Kind          `json:"kind"`
+		Level zerolog.Level `json:"level"`
+		*Alias
+	}{
+		Err:   e.Err,
+		Op:    e.Op,
+		Kind:  e.Kind,
+		Level: e.Level,
+		Alias: (*Alias)(e),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	// u.LastSeen = time.Unix(aux.LastSeen, 0)
+	return nil
 }
 
 // New is...
