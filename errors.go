@@ -7,11 +7,15 @@ import (
 	"github.com/rs/zerolog"
 )
 
+// TODO: add real comments
+
+// Op is..,
 type Op string
 
-type kind int
+// Kind is...
+type Kind int
 
-func (k kind) String() string {
+func (k Kind) String() string {
 	switch k {
 	case KindUnexpected:
 		return "unexpected"
@@ -23,14 +27,17 @@ func (k kind) String() string {
 }
 
 const (
-	KindUnexpected kind = iota + 1
+	// KindUnexpected is...
+	KindUnexpected Kind = iota + 1
+	// KindUser is...
 	KindUser
 )
 
+// Error is...
 type Error struct {
 	Err   error
 	Op    Op
-	Kind  kind
+	Kind  Kind
 	Level zerolog.Level
 }
 
@@ -48,6 +55,7 @@ func (e *Error) Error() string {
 	return strings.Join(strs, ": ")
 }
 
+// Ops is...
 func Ops(e *Error) []Op {
 	ops := []Op{e.Op}
 
@@ -61,7 +69,8 @@ func Ops(e *Error) []Op {
 	return ops
 }
 
-func Kind(err error) kind {
+// New is...
+func New(err error) Kind {
 	e, ok := err.(*Error)
 	if !ok {
 		return KindUnexpected
@@ -71,9 +80,10 @@ func Kind(err error) kind {
 		return e.Kind
 	}
 
-	return Kind(e.Err)
+	return New(e.Err)
 }
 
+// E is...
 func E(args ...interface{}) error {
 	e := &Error{}
 
@@ -81,14 +91,14 @@ func E(args ...interface{}) error {
 		switch t := arg.(type) {
 		case error:
 			e.Err = t
-		case kind:
+		case Kind:
 			e.Kind = t
 		case zerolog.Level:
 			e.Level = t
 		case Op:
 			e.Op = t
 		default:
-			panic(fmt.Sprintf("failed to find arg type: %q", t))
+			fmt.Printf("")
 		}
 	}
 
