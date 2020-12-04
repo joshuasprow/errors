@@ -1,5 +1,43 @@
 package errors
 
+import (
+	"fmt"
+
+	"github.com/rs/zerolog"
+)
+
+func concatMessage(msg string, t string) string {
+	return msg + ": " + t
+}
+
+// E is...
+func E(args ...interface{}) error {
+	e := &Error{}
+
+	msg := ""
+
+	for _, arg := range args {
+		switch t := arg.(type) {
+		case error:
+			e.Err = t
+		case Kind:
+			e.Kind = t
+		case zerolog.Level:
+			e.Level = t
+		case string:
+			concatMessage(msg, t)
+		case Op:
+			e.Op = t
+		default:
+			fmt.Printf("errors.E: unhandled type: %v", t)
+		}
+	}
+
+	e.Msg = msg
+
+	return e
+}
+
 // GetKind is...
 func GetKind(err error) Kind {
 	e, ok := err.(*Error)

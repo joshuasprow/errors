@@ -2,7 +2,6 @@ package errors
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/rs/zerolog"
@@ -13,31 +12,10 @@ import (
 // Error is...
 type Error struct {
 	Err   error
-	Op    Op
 	Kind  Kind
 	Level zerolog.Level
-}
-
-// E is...
-func E(args ...interface{}) error {
-	e := &Error{}
-
-	for _, arg := range args {
-		switch t := arg.(type) {
-		case error:
-			e.Err = t
-		case Kind:
-			e.Kind = t
-		case zerolog.Level:
-			e.Level = t
-		case Op:
-			e.Op = t
-		default:
-			fmt.Printf("errors.E: unhandled type: %v", t)
-		}
-	}
-
-	return e
+	Msg   string
+	Op    Op
 }
 
 func (e *Error) Error() string {
