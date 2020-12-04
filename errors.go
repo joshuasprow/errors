@@ -61,7 +61,7 @@ func E(args ...interface{}) error {
 		case Op:
 			e.Op = t
 		default:
-			fmt.Printf("")
+			fmt.Printf("errors.E: unhandled type: %v", t)
 		}
 	}
 
