@@ -31,7 +31,7 @@ func E(args ...interface{}) error {
 		case zerolog.Level:
 			e.Level = t
 		case string:
-			concatErrStrings(msg, t)
+			msg = concatErrStrings(msg, t)
 		case Op:
 			e.Op = t
 		default:

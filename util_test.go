@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/rs/zerolog"
 )
 
 func Test_concatErrStrings(t *testing.T) {
@@ -69,15 +68,10 @@ func TestE(t *testing.T) {
 		{
 			name: "correctly formats message",
 			args: []interface{}{"msg1", "msg2"},
-			want: Error{
-				Err:   nil,
-				Kind:  KindUnexpected,
-				Level: zerolog.DebugLevel,
-				Msg:   "msg1: msg2",
-				Op:    "",
-			},
+			want: Error{Msg: "msg1: msg2"},
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := E(tt.args...).(*Error)
