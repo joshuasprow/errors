@@ -6,8 +6,14 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func concatMessage(msg string, t string) string {
-	return msg + ": " + t
+func concatErrStrings(s1 string, s2 string) string {
+	if s1 == "" {
+		return s2
+	}
+	if s2 == "" {
+		return s1
+	}
+	return s1 + ": " + s2
 }
 
 // E is...
@@ -25,7 +31,7 @@ func E(args ...interface{}) error {
 		case zerolog.Level:
 			e.Level = t
 		case string:
-			concatMessage(msg, t)
+			concatErrStrings(msg, t)
 		case Op:
 			e.Op = t
 		default:
